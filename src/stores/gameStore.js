@@ -20,6 +20,8 @@ export const useGameStore = defineStore('game', () => {
   const activeHeapId = ref(null); // đống đang được chọn
   const selectedStones = ref({}); // { heapId: [stoneIndex1, stoneIndex2, ...] }
 
+  const historyMoves = ref([]); // biến lưu lịch sử nước đi
+
   // actions
   function startNewGame({ mode = 'PVP', vra = 'normal', level = 'easy' } = {}) {
     heaps.value = initHeaps();
@@ -31,6 +33,7 @@ export const useGameStore = defineStore('game', () => {
     winner.value = null;
     activeHeapId.value = null;
     selectedStones.value = {};
+    historyMoves.value = [];
 
     if (gameMode.value === 'PVE' && currentPlayer.value === 2) {
       aiMove();
@@ -41,6 +44,23 @@ export const useGameStore = defineStore('game', () => {
     if (gameOver.value) return;
 
     heaps.value = applyMove(heaps.value, heapIndex, amount);
+
+    // Tạo thông tin 1 nước đi để lưu vào lịch sử
+    const moveInfo = {
+      moveNumber: historyMoves.value.length + 1,
+      player:
+        gameMode.value === 'PVP'
+          ? `Người chơi ${currentPlayer.value}`
+          : currentPlayer.value === 1
+            ? 'Người'
+            : 'Máy',
+      heapId: heapIndex + 1,
+      stonesBefore: heaps.value[heapIndex].stones + amount,
+      stonesRemoved: amount,
+      stonesAfter: heaps.value[heapIndex].stones
+    };
+
+    historyMoves.value.push(moveInfo);
 
     if (isGameOver(heaps.value)) {
       handleGameOver();
@@ -91,6 +111,7 @@ export const useGameStore = defineStore('game', () => {
     aiLevel,
     activeHeapId,
     selectedStones,
+    historyMoves,
     startNewGame,
     makeMove,
     switchPlayer,

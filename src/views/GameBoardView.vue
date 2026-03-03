@@ -6,6 +6,13 @@ import GameBoard from '@/components/GameBoard.vue';
 import GameFooter from '@/components/GameFooter.vue';
 import WinnerModal from '@/components/WinnerModal.vue';
 import { useRoute, useRouter } from 'vue-router';
+import HistoryMovesDrawer from '@/components/HistoryMovesDrawer.vue';
+
+const isHistoryOpen = ref(false);
+
+const openMoveDrawer = () => {
+  isHistoryOpen.value = true;
+};
 
 const gameStore = useGameStore();
 
@@ -50,6 +57,7 @@ const goHome = () => {
       :game-mode="gameStore.gameMode"
       :variant="gameStore.variant"
       :ai-level="gameStore.aiLevel"
+      @open-move-drawer="openMoveDrawer"
     />
 
     <main class="flex-1 px-10 py-8">
@@ -76,4 +84,6 @@ const goHome = () => {
     @replay="replay"
     @close="goHome"
   />
+
+  <HistoryMovesDrawer :is-open="isHistoryOpen" @close="isHistoryOpen = false" />
 </template>

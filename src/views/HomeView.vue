@@ -81,7 +81,7 @@ const goGuide = () => {
             <label
               class="flex items-center gap-3 py-2 px-4 rounded-xl border cursor-pointer transition"
               :class="
-                mode === 'normal'
+                variant === 'normal'
                   ? 'border-blue-500 bg-blue-50'
                   : 'border-gray-200 hover:border-blue-300'
               "
@@ -106,7 +106,7 @@ const goGuide = () => {
             <label
               class="flex items-center gap-3 py-2 px-4 rounded-xl border cursor-pointer transition"
               :class="
-                mode === 'misere'
+                variant === 'misere'
                   ? 'border-blue-500 bg-blue-50'
                   : 'border-gray-200 hover:border-blue-300'
               "

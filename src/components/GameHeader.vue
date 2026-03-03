@@ -5,6 +5,10 @@ defineProps({
   variant: String,
   aiLevel: String
 });
+
+const emit = defineEmits(['openMoveDrawer']);
+
+const openMoveDrawer = () => emit('openMoveDrawer');
 </script>
 
 <template>
@@ -39,6 +43,12 @@ defineProps({
       <div class="px-4 py-2 rounded-lg bg-slate-100 text-sm">
         🎮 Thể loại: {{ variant === 'normal' ? 'Nim chuẩn' : 'Misère' }}
       </div>
+      <button
+        @click="openMoveDrawer"
+        class="px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
+      >
+        Xem lịch sử
+      </button>
     </div>
   </header>
 </template>
