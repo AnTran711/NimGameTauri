@@ -5,6 +5,7 @@ import { initFirstPlayer } from '@/logic/initFirstPlayer';
 import { applyMove, isGameOver, normalCheckWinner } from '@/logic/nimLogic';
 import { misereCheckWinner } from '@/logic/misereLogic';
 import { getEasyMove, getHardMove } from '@/ai';
+import { useSavedGameStore } from './savedGameStore';
 
 export const useGameStore = defineStore('game', () => {
   // states
@@ -27,6 +28,8 @@ export const useGameStore = defineStore('game', () => {
 
   const isChanged = ref(false); // Cờ đánh dấu có thay đổi nào đó so với lúc bắt đầu hay không
 
+  const currentGameId = ref(null); // ID của game đang chơi
+
   // actions
   function startNewGame({ mode = 'PVP', vra = 'normal', level = 'easy' } = {}) {
     heaps.value = initHeaps();
@@ -41,6 +44,7 @@ export const useGameStore = defineStore('game', () => {
     historyMoves.value = [];
     isGameStarted.value = true;
     isChanged.value = false;
+    currentGameId.value = null;
 
     if (gameMode.value === 'PVE' && currentPlayer.value === 2) {
       aiMove();
@@ -94,6 +98,18 @@ export const useGameStore = defineStore('game', () => {
     } else {
       winner.value = misereCheckWinner(heaps.value, currentPlayer.value);
     }
+
+    // Nếu game kết thúc thì xóa game khỏi lịch sử lưu nếu có
+    const savedGameStore = useSavedGameStore();
+    if (currentGameId.value) {
+      const index = savedGameStore.savedGames.findIndex(
+        (g) => g.id === currentGameId.value
+      );
+      if (index !== -1) {
+        savedGameStore.savedGames.splice(index, 1);
+        savedGameStore.writeSavedGames();
+      }
+    }
   }
 
   function aiMove() {
@@ -127,7 +143,7 @@ export const useGameStore = defineStore('game', () => {
   }
 
   // Nạp state từ object đã lưu vào store
-  function importGameState(state) {
+  function importGameState(state, id = null) {
     if (!state || !state.heaps) {
       console.error('importGameState: state không hợp lệ', state);
       return;
@@ -144,6 +160,7 @@ export const useGameStore = defineStore('game', () => {
     selectedStones.value = {};
     isGameStarted.value = true;
     isChanged.value = false;
+    currentGameId.value = id;
   }
 
   // Kiểm tra game có đang chơi dở không (chưa kết thúc VÀ đã có nước đi)

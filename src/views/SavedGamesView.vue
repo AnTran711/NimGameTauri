@@ -15,7 +15,7 @@ onMounted(async () => {
 async function loadGame(id) {
   const saved = await savedGameStore.getSavedGame(id);
   if (saved) {
-    gameStore.importGameState(saved.gameState);
+    gameStore.importGameState(saved.gameState, id);
     router.push({
       path: '/game',
       query: {
