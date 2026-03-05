@@ -42,6 +42,10 @@ const startNewGame = () => {
   });
 };
 
+const goSavedGames = () => {
+  router.push('/saved-games');
+};
+
 const goGuide = () => {
   router.push('/guide');
 };
@@ -176,6 +180,28 @@ const goGuide = () => {
               />
             </svg>
             Người vs Máy
+          </button>
+
+          <!-- Saved games -->
+          <button
+            @click="goSavedGames"
+            class="w-full flex items-center justify-center gap-2 cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"
+              />
+            </svg>
+            Trò chơi đã lưu
           </button>
 
           <!-- Guide -->

@@ -6,9 +6,10 @@ defineProps({
   aiLevel: String
 });
 
-const emit = defineEmits(['openMoveDrawer']);
+const emit = defineEmits(['openMoveDrawer', 'saveGame']);
 
 const openMoveDrawer = () => emit('openMoveDrawer');
+const saveGame = () => emit('saveGame');
 </script>
 
 <template>
@@ -43,6 +44,12 @@ const openMoveDrawer = () => emit('openMoveDrawer');
       <div class="px-4 py-2 rounded-lg bg-slate-100 text-sm">
         🎮 Thể loại: {{ variant === 'normal' ? 'Nim chuẩn' : 'Misère' }}
       </div>
+      <button
+        @click="saveGame"
+        class="px-4 py-2 bg-green-600 text-white rounded-xl shadow hover:bg-green-700 transition"
+      >
+        💾 Lưu game
+      </button>
       <button
         @click="openMoveDrawer"
         class="px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"

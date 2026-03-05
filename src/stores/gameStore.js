@@ -22,6 +22,11 @@ export const useGameStore = defineStore('game', () => {
 
   const historyMoves = ref([]); // biến lưu lịch sử nước đi
 
+  // Cờ đánh dấu game đã bắt đầu (dùng cho việc hỏi lưu khi thoát)
+  const isGameStarted = ref(false);
+
+  const isChanged = ref(false); // Cờ đánh dấu có thay đổi nào đó so với lúc bắt đầu hay không
+
   // actions
   function startNewGame({ mode = 'PVP', vra = 'normal', level = 'easy' } = {}) {
     heaps.value = initHeaps();
@@ -34,6 +39,8 @@ export const useGameStore = defineStore('game', () => {
     activeHeapId.value = null;
     selectedStones.value = {};
     historyMoves.value = [];
+    isGameStarted.value = true;
+    isChanged.value = false;
 
     if (gameMode.value === 'PVE' && currentPlayer.value === 2) {
       aiMove();
@@ -44,6 +51,7 @@ export const useGameStore = defineStore('game', () => {
     if (gameOver.value) return;
 
     heaps.value = applyMove(heaps.value, heapIndex, amount);
+    isChanged.value = true;
 
     // Tạo thông tin 1 nước đi để lưu vào lịch sử
     const moveInfo = {
@@ -78,6 +86,7 @@ export const useGameStore = defineStore('game', () => {
 
   function handleGameOver() {
     gameOver.value = true;
+    isGameStarted.value = false;
 
     // 2 truong hop: normal || misere
     if (variant.value === 'normal') {
@@ -101,6 +110,49 @@ export const useGameStore = defineStore('game', () => {
     }, 200);
   }
 
+  // === SAVE / LOAD ===
+
+  // Xuất toàn bộ state hiện tại thành object để lưu
+  function exportGameState() {
+    return {
+      heaps: JSON.parse(JSON.stringify(heaps.value)),
+      currentPlayer: currentPlayer.value,
+      gameOver: gameOver.value,
+      winner: winner.value,
+      gameMode: gameMode.value,
+      variant: variant.value,
+      aiLevel: aiLevel.value,
+      historyMoves: JSON.parse(JSON.stringify(historyMoves.value))
+    };
+  }
+
+  // Nạp state từ object đã lưu vào store
+  function importGameState(state) {
+    if (!state || !state.heaps) {
+      console.error('importGameState: state không hợp lệ', state);
+      return;
+    }
+    heaps.value = state.heaps;
+    currentPlayer.value = state.currentPlayer;
+    gameOver.value = state.gameOver;
+    winner.value = state.winner;
+    gameMode.value = state.gameMode;
+    variant.value = state.variant;
+    aiLevel.value = state.aiLevel;
+    historyMoves.value = state.historyMoves;
+    activeHeapId.value = null;
+    selectedStones.value = {};
+    isGameStarted.value = true;
+    isChanged.value = false;
+  }
+
+  // Kiểm tra game có đang chơi dở không (chưa kết thúc VÀ đã có nước đi)
+  function isGameInProgress() {
+    return (
+      isGameStarted.value && !gameOver.value && historyMoves.value.length > 0
+    );
+  }
+
   return {
     heaps,
     currentPlayer,
@@ -112,10 +164,15 @@ export const useGameStore = defineStore('game', () => {
     activeHeapId,
     selectedStones,
     historyMoves,
+    isGameStarted,
+    isChanged,
     startNewGame,
     makeMove,
     switchPlayer,
     handleGameOver,
-    aiMove
+    aiMove,
+    exportGameState,
+    importGameState,
+    isGameInProgress
   };
 });
