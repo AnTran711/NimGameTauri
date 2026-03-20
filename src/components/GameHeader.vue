@@ -1,4 +1,6 @@
 <script setup>
+import PixelButton from './pixel/PixelButton.vue';
+
 defineProps({
   currentPlayer: Number,
   gameMode: String,
@@ -13,26 +15,23 @@ const saveGame = () => emit('saveGame');
 </script>
 
 <template>
-  <header class="h-16 bg-white border-b flex items-center justify-between px-6">
-    <div class="flex items-center gap-3">
-      <div
-        class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center"
-      >
-        ⬛
+  <header class="px-header">
+    <div class="left">
+      <div>
+        <p class="title">NIM GAME</p>
+        <p class="sub">
+          {{
+            gameMode === 'PVP'
+              ? 'Người vs Người'
+              : `Người vs Máy (${aiLevel === 'easy' ? 'Dễ' : 'Khó'})`
+          }}
+        </p>
       </div>
-      <span class="text-lg font-semibold">Nim Game</span>
-      <span class="text-lg font-semibold">{{
-        gameMode === 'PVP'
-          ? 'Người vs Người'
-          : `Người vs Máy (${aiLevel === 'easy' ? 'Dễ' : 'Khó'})`
-      }}</span>
     </div>
 
-    <div class="flex items-center gap-3">
-      <div
-        class="px-4 py-2 rounded-lg bg-blue-50 text-blue-600 text-sm font-medium"
-      >
-        🟢 Lượt hiện tại:
+    <div class="right">
+      <div class="chip chip-blue">
+        Lượt:
         {{
           gameMode === 'PVP'
             ? `Người chơi ${currentPlayer}`
@@ -41,21 +40,69 @@ const saveGame = () => emit('saveGame');
               : 'Máy'
         }}
       </div>
-      <div class="px-4 py-2 rounded-lg bg-slate-100 text-sm">
-        🎮 Thể loại: {{ variant === 'normal' ? 'Nim chuẩn' : 'Misère' }}
+      <div class="chip chip-brown">
+        Thể loại: {{ variant === 'normal' ? 'Nim chuẩn' : 'Misère' }}
       </div>
-      <button
-        @click="saveGame"
-        class="px-4 py-2 bg-green-600 text-white rounded-xl shadow hover:bg-green-700 transition"
+      <PixelButton color="green" class="px-btn" @click="saveGame"
+        >Lưu game</PixelButton
       >
-        💾 Lưu game
-      </button>
-      <button
-        @click="openMoveDrawer"
-        class="px-4 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
+      <PixelButton color="blue" class="px-btn" @click="openMoveDrawer"
+        >Lịch sử</PixelButton
       >
-        Xem lịch sử
-      </button>
     </div>
   </header>
 </template>
+
+<style scoped>
+.px-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 4px solid #3d200e;
+  background: #b87e35;
+}
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.title {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1;
+  color: #fff;
+}
+.sub {
+  margin: 4px 0 0;
+  font-size: 24px;
+  color: #fff;
+  line-height: 1.1;
+}
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.chip {
+  border: 3px solid #3d200e;
+  padding: 6px 8px;
+  line-height: 1;
+  font-size: 24px;
+  color: #fff;
+}
+.chip-blue {
+  background: #2f79ff;
+}
+.chip-brown {
+  background: #8a5820;
+}
+.px-btn {
+  font-size: 24px;
+  text-align: center;
+  line-height: 1;
+  --pixel-text-nudge: -4px;
+}
+</style>

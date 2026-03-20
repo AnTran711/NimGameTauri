@@ -43,27 +43,19 @@ function toggleSelectAll() {
 
 <template>
   <div
-    class="relative bg-white rounded-2xl border p-4 transition"
-    :class="{
-      'opacity-40': isDisabled,
-      'border-blue-500 ring-2 ring-blue-300': isActive,
-      'cursor-pointer hover:border-slate-300': !isDisabled
-    }"
+    class="heap-card"
+    :class="{ disabled: isDisabled, active: isActive && !isDisabled }"
   >
-    <!-- badge SELECTED -->
-    <div
-      v-if="isActive && selectedStones.length > 0"
-      class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full font-medium"
-    >
+    <div v-if="isActive && selectedStones.length > 0" class="selected-badge">
       {{ selectedStones.length }} đá đã chọn
     </div>
 
-    <div class="flex justify-between items-center text-sm text-slate-500">
-      <span class="font-medium">Đống {{ heap.id }}</span>
+    <div class="heap-top">
+      <span>Đống {{ heap.id }}</span>
       <span>Còn lại: {{ heap.stones }}</span>
     </div>
 
-    <div class="h-22 mt-2 grid grid-cols-5 gap-2 place-items-center">
+    <div class="stone-grid">
       <Stone
         v-for="i in heap.stones"
         :key="i"
@@ -73,23 +65,132 @@ function toggleSelectAll() {
       />
     </div>
 
-    <!-- Checkbox chọn tất cả -->
-    <div class="mt-2 flex items-center justify-center gap-2">
+    <label class="select-all" :class="{ off: isDisabled }">
       <input
+        class="select-all__native"
         type="checkbox"
-        :id="'selectAll-' + heap.id"
         :checked="isAllSelected"
         :disabled="isDisabled"
         @change="toggleSelectAll"
-        class="w-4 h-4 text-blue-500 rounded cursor-pointer disabled:cursor-not-allowed"
       />
-      <label
-        :for="'selectAll-' + heap.id"
-        class="text-sm text-slate-600 cursor-pointer select-none"
-        :class="{ 'opacity-50 cursor-not-allowed': isDisabled }"
-      >
-        Chọn tất cả
-      </label>
-    </div>
+      <span class="select-all__box" aria-hidden="true"></span>
+      <span class="select-all__text">Chọn tất cả</span>
+    </label>
   </div>
 </template>
+
+<style scoped>
+.heap-card {
+  position: relative;
+  border: 4px solid #3d200e;
+  padding: 10px;
+  background-color: #ef9a32;
+  box-shadow:
+    inset 2px 2px 0 #d4a060,
+    inset -2px -2px 0 #8a5820;
+}
+.heap-card,
+.heap-card * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.heap-card.active {
+  border-color: #f7d51d;
+}
+.heap-card.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.selected-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  background: #2f79ff;
+  color: #fff;
+  border: 3px solid #3d200e;
+  font-size: 18px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.heap-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+.stone-grid {
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: repeat(5, 32px);
+  grid-auto-rows: 32px;
+  gap: 6px;
+  justify-content: center;
+  align-content: center;
+  place-items: center;
+  margin: 2px 0 4px;
+}
+.select-all {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.select-all__native {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.select-all__box {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #3d200e;
+  background: #eecb92;
+  box-shadow:
+    inset 1px 1px 0 #f3d2a8,
+    inset -1px -1px 0 #8a5820;
+  flex: 0 0 18px; /* khóa kích thước, không bị co kéo */
+}
+
+.select-all__text {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  transform: translateY(-4px); /* chỉnh thị giác do baseline pixel font */
+}
+
+.select-all__native:checked + .select-all__box {
+  background: #f7d51d;
+  box-shadow:
+    inset 0 0 0 3px #3d200e,
+    inset 1px 1px 0 #ffe977,
+    inset -1px -1px 0 #b4820b;
+}
+
+.select-all__native:focus-visible + .select-all__box {
+  outline: 2px solid #60c8ff;
+  outline-offset: 2px;
+}
+
+.select-all.off {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>

@@ -1,4 +1,6 @@
 <script setup>
+import PixelButton from './pixel/PixelButton.vue';
+
 const props = defineProps({
   show: Boolean
 });
@@ -15,106 +17,165 @@ const close = () => {
 </script>
 
 <template>
-  <div>
-    <!-- Overlay -->
-    <div
-      v-if="show"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-    >
-      <!-- Modal -->
-      <div class="w-105 bg-white rounded-2xl shadow-2xl p-8 text-center">
-        <!-- Icon -->
-        <div
-          class="w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-blue-100 text-blue-600"
+  <div v-if="show" class="px-overlay" @click.self="close">
+    <div class="px-modal">
+      <h2 class="px-title">Chọn độ khó máy</h2>
+      <p class="px-subtitle">Hãy chọn mức độ thử thách phù hợp với bạn.</p>
+
+      <div class="px-options">
+        <PixelButton
+          color="green"
+          class="px-option--easy"
+          @click="select('easy')"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-7 h-7"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
-
-        <!-- Title -->
-        <h2 class="text-2xl font-bold text-gray-800 mb-1">Chọn độ khó máy</h2>
-
-        <p class="text-gray-500 mb-8 text-sm">
-          Hãy chọn mức độ thử thách phù hợp với bạn.
-        </p>
-
-        <!-- Options -->
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          <!-- Easy -->
-          <button
-            @click="select('easy')"
-            class="p-5 rounded-xl border border-gray-200 transition cursor-pointer hover:ring-2 hover:ring-green-400 hover:bg-green-50"
-          >
-            <div
-              class="w-10 h-10 mx-auto mb-2 flex items-center justify-center rounded-full bg-green-100 text-green-500"
-            >
+          <div class="p-4 flex flex-col justify-center items-center">
+            <div class="px-option-icon" aria-hidden="true">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                fill="none"
+                width="38"
+                height="38"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
-                />
+                <rect x="6" y="20" width="12" height="2" />
+                <rect x="6" y="2" width="12" height="2" />
+                <rect x="18" y="4" width="2" height="2" />
+                <rect x="4" y="4" width="2" height="2" />
+                <rect x="4" y="18" width="2" height="2" />
+                <rect x="18" y="18" width="2" height="2" />
+                <rect x="2" y="6" width="2" height="12" />
+                <rect x="20" y="6" width="2" height="12" />
+                <rect x="7" y="13" width="2" height="2" />
+                <rect x="9" y="15" width="6" height="2" />
+                <rect x="15" y="13" width="2" height="2" />
+                <rect x="8" y="8" width="2" height="2" />
+                <rect x="14" y="8" width="2" height="2" />
               </svg>
             </div>
+            <p class="px-option-label">Dễ</p>
+          </div>
+        </PixelButton>
 
-            <p class="font-semibold text-green-600">Dễ</p>
-          </button>
-
-          <!-- Hard -->
-          <button
-            @click="select('hard')"
-            class="p-5 rounded-xl border border-gray-200 transition cursor-pointer hover:ring-2 hover:ring-blue-400 hover:bg-blue-50"
-          >
-            <div
-              class="w-10 h-10 mx-auto mb-2 flex items-center justify-center rounded-full bg-blue-100 text-blue-600"
-            >
+        <PixelButton
+          color="blue"
+          class="px-option--hard"
+          @click="select('hard')"
+        >
+          <div class="p-4 flex flex-col justify-center items-center">
+            <div class="px-option-icon" aria-hidden="true">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                fill="none"
+                width="38"
+                height="38"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
+                <rect x="7" y="20" width="2" height="2" />
+                <rect x="11" y="20" width="2" height="2" />
+                <rect x="15" y="20" width="2" height="2" />
+                <rect x="9" y="16" width="2" height="4" />
+                <rect x="13" y="16" width="2" height="4" />
+                <rect x="5" y="14" width="2" height="6" />
+                <rect x="17" y="14" width="2" height="6" />
+                <rect x="3" y="14" width="4" height="2" />
+                <rect x="1" y="4" width="2" height="10" />
+                <rect x="21" y="4" width="2" height="10" />
+                <rect x="3" y="2" width="18" height="2" />
+                <rect x="17" y="14" width="4" height="2" />
+                <rect x="8" y="7" width="2" height="4" />
+                <rect x="14" y="7" width="2" height="4" />
               </svg>
             </div>
+            <p class="px-option-label">Khó</p>
+          </div>
+        </PixelButton>
+      </div>
 
-            <p class="font-semibold text-blue-600">Khó</p>
-          </button>
-        </div>
-
-        <!-- Cancel -->
-        <button
+      <div class="flex justify-center mt-8">
+        <PixelButton
+          color="red"
+          style="--pixel-text-nudge: -4px"
           @click="close"
-          class="text-sm text-gray-500 hover:text-gray-700 cursor-pointer transition"
         >
           Hủy bỏ
-        </button>
+        </PixelButton>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.px-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.62);
+  padding: 12px;
+}
+
+.px-modal {
+  position: relative;
+  width: min(92vw, 560px);
+  background: #b87e35;
+  color: #fff;
+  border: 6px solid #3d200e;
+  padding: 20px 18px 18px;
+  box-shadow:
+    inset 3px 3px 0 #d4a060,
+    inset -3px -3px 0 #8a5820,
+    6px 6px 0 rgba(0, 0, 0, 0.5);
+  text-align: center;
+  image-rendering: pixelated;
+
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.px-title {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1;
+  color: #fff7cf;
+  text-shadow: 2px 2px 0 #5c3716;
+}
+
+.px-subtitle {
+  margin: 10px 0 16px;
+  font-size: 24px;
+  line-height: 1.2;
+  color: #ffe6c3;
+}
+
+.px-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.px-option-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 8px;
+  display: grid;
+  place-items: center;
+  border: 3px solid #3d200e;
+  background: #fff4d5;
+}
+
+.px-option--easy .px-option-icon {
+  color: #0f7a34;
+}
+
+.px-option--hard .px-option-icon {
+  color: #1358a8;
+}
+
+.px-option-label {
+  margin: 0;
+  font-size: 48px;
+  line-height: 1;
+}
+</style>

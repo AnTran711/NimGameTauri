@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import PixelButton from './pixel/PixelButton.vue';
 
 const router = useRouter();
 
@@ -21,47 +22,53 @@ const disableButtonOnAITurn = computed(
 </script>
 
 <template>
-  <footer
-    class="h-20 bg-white border-t flex items-center justify-between px-64"
-  >
-    <button
-      @click="goHome"
-      class="flex items-center gap-2 text-slate-600 hover:text-slate-800 transition"
-    >
-      ⬅️ Về trang chủ
-    </button>
+  <footer class="px-footer">
+    <PixelButton color="yellow" class="px-btn" @click="goHome">
+      Về trang chủ
+    </PixelButton>
 
-    <div class="flex gap-4">
-      <button
+    <div class="actions">
+      <PixelButton
+        color="red"
         @click="emit('cancel')"
-        class="px-6 py-3 rounded-xl border font-medium transition"
-        :class="
-          disableButtonOnAITurn
-            ? 'border-slate-200 text-slate-400 bg-slate-100 cursor-not-allowed'
-            : 'border-slate-300 text-slate-700 hover:bg-slate-100'
-        "
+        class="px-btn"
         :disabled="disableButtonOnAITurn"
       >
-        <span v-if="disableButtonOnAITurn" class="flex items-center gap-2">
-          <span class="animate-spin">⏳</span> AI đang nghĩ
-        </span>
-        <span v-else>✖ Hủy chọn</span>
-      </button>
-      <button
+        <span v-if="disableButtonOnAITurn">AI đang nghĩ...</span>
+        <span v-else>Hủy chọn</span>
+      </PixelButton>
+
+      <PixelButton
+        color="blue"
         @click="emit('confirm')"
-        class="px-6 py-3 rounded-xl font-semibold transition shadow-sm"
-        :class="
-          disableButtonOnAITurn
-            ? 'bg-blue-300 text-blue-100 cursor-not-allowed'
-            : 'bg-blue-500 text-white hover:bg-blue-600'
-        "
+        class="px-btn"
         :disabled="disableButtonOnAITurn"
       >
-        <span v-if="disableButtonOnAITurn" class="flex items-center gap-2">
-          <span class="animate-spin">⏳</span> AI đang nghĩ
-        </span>
-        <span v-else>✔ Xác nhận bốc</span>
-      </button>
+        <span v-if="disableButtonOnAITurn">AI đang nghĩ...</span>
+        <span v-else>Xác nhận bốc</span>
+      </PixelButton>
     </div>
   </footer>
 </template>
+
+<style scoped>
+.px-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-top: 4px solid #3d200e;
+  background: #b87e35;
+}
+.px-btn {
+  font-size: 24px;
+  text-align: center;
+  line-height: 1;
+  --pixel-text-nudge: -4px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+}
+</style>

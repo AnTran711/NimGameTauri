@@ -11,9 +11,16 @@ import {
 const SAVE_DIR = 'nim-saves';
 const SAVE_FILE = 'nim-saves/saved-games.json';
 
+function deepClone(data) {
+  return JSON.parse(JSON.stringify(data));
+}
+
+function makeId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 export const useSavedGameStore = defineStore('savedGame', () => {
   const savedGames = ref([]);
-  const hasSaved = ref(false);
 
   // Đảm bảo thư mục lưu tồn tại
   async function ensureSaveDir() {
@@ -35,14 +42,18 @@ export const useSavedGameStore = defineStore('savedGame', () => {
       const fileExists = await exists(SAVE_FILE, {
         baseDir: BaseDirectory.AppData
       });
-      if (fileExists) {
-        const content = await readTextFile(SAVE_FILE, {
-          baseDir: BaseDirectory.AppData
-        });
-        savedGames.value = JSON.parse(content);
-      } else {
+
+      if (!fileExists) {
         savedGames.value = [];
+        return;
       }
+
+      const content = await readTextFile(SAVE_FILE, {
+        baseDir: BaseDirectory.AppData
+      });
+
+      const parsed = JSON.parse(content);
+      savedGames.value = Array.isArray(parsed) ? parsed : [];
     } catch (error) {
       console.error('Lỗi khi đọc file saved games:', error);
       savedGames.value = [];
@@ -56,59 +67,57 @@ export const useSavedGameStore = defineStore('savedGame', () => {
       await writeTextFile(
         SAVE_FILE,
         JSON.stringify(savedGames.value, null, 2),
-        {
-          baseDir: BaseDirectory.AppData
-        }
+        { baseDir: BaseDirectory.AppData }
       );
+      return true;
     } catch (error) {
       console.error('Lỗi khi ghi file saved games:', error);
-      savedGames.value.pop();
+      return false;
     }
   }
 
   // Lưu 1 game mới
-  async function saveGame(gameState) {
+  async function saveGame(gameState, id = null) {
     await loadSavedGames();
 
+    const targetId = id || makeId();
     const now = Date.now();
+
     const saveData = {
-      id: now.toString(),
+      id: targetId,
       timestamp: now,
-      isActive: false,
-      gameState: { ...gameState }
+      gameState: deepClone(gameState)
     };
 
-    const gameActiveIdx = savedGames.value.findIndex(
-      (g) => g.isActive === true
-    );
-
-    if (gameActiveIdx === -1) {
-      savedGames.value.push(saveData);
+    const index = savedGames.value.findIndex((g) => g.id === targetId);
+    if (index === -1) {
+      savedGames.value.unshift(saveData);
     } else {
-      savedGames.value[gameActiveIdx] = saveData;
+      savedGames.value[index] = saveData;
     }
 
-    await writeSavedGames();
-    hasSaved.value = true;
+    const ok = await writeSavedGames();
+    if (!ok) return null;
+
+    return targetId;
   }
 
   // Xóa 1 game đã lưu theo id
   async function deleteSavedGame(id) {
+    await loadSavedGames();
     savedGames.value = savedGames.value.filter((g) => g.id !== id);
-    await writeSavedGames();
+    return await writeSavedGames();
   }
 
   // Lấy 1 game đã lưu theo id
   async function getSavedGame(id) {
-    const gameActiveIdx = savedGames.value.findIndex((g) => g.id === id);
-    savedGames.value[gameActiveIdx].isActive = true;
-    await writeSavedGames();
-    return savedGames.value[gameActiveIdx];
+    await loadSavedGames();
+    const game = savedGames.value.find((g) => g.id === id);
+    return game ? deepClone(game) : null;
   }
 
   return {
     savedGames,
-    hasSaved,
     loadSavedGames,
     writeSavedGames,
     saveGame,

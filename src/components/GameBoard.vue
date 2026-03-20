@@ -90,13 +90,11 @@ defineExpose({
 </script>
 
 <template>
-  <section>
-    <h1 class="text-2xl font-bold text-center">Game Board</h1>
-    <p class="text-center text-slate-500 mt-1">
-      Chọn sỏi từ một đống bất kỳ để bốc.
-    </p>
+  <section class="board-panel">
+    <h1 class="board-title">GAME BOARD</h1>
+    <p class="board-sub">Chọn sỏi từ một đống để bốc.</p>
 
-    <div class="mt-10 grid grid-cols-5 gap-6">
+    <div class="heap-grid">
       <HeapCard
         v-for="heap in gameStore.heaps"
         :key="heap.id"
@@ -109,3 +107,50 @@ defineExpose({
     </div>
   </section>
 </template>
+
+<style scoped>
+.board-panel {
+  width: 100%;
+  height: 100%;
+  background: #b87e35;
+  border: 4px solid #3d200e;
+  padding: 12px;
+  box-shadow:
+    inset 2px 2px 0 #d4a060,
+    inset -2px -2px 0 #8a5820;
+  display: flex;
+  flex-direction: column;
+}
+.board-title {
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  line-height: 1;
+  font-size: 48px;
+  text-shadow: 2px 2px 0 #6a3d11;
+}
+.board-sub {
+  margin: 8px 0 0;
+  text-align: center;
+  color: #fff;
+  font-size: 24px;
+}
+.heap-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  min-height: 390px;
+  align-content: center;
+}
+@media (max-width: 1100px) {
+  .heap-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .heap-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>

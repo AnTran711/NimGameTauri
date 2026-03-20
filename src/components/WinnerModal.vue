@@ -1,4 +1,6 @@
 <script setup>
+import PixelButton from './pixel/PixelButton.vue';
+
 defineProps({
   show: {
     type: Boolean,
@@ -20,63 +22,20 @@ function onReplay() {
 
 <template>
   <Transition name="modal">
-    <div
-      v-if="show"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-    >
-      <!-- Modal Box -->
-      <div
-        class="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 text-center"
-      >
-        <!-- Icon -->
-        <div class="flex justify-center mb-4">
-          <div
-            class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center"
-          >
-            <svg
-              class="w-8 h-8 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-        </div>
-
-        <!-- Title -->
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">🎉 Chúc mừng!</h2>
-
-        <!-- Winner -->
-        <p class="text-lg text-gray-600 mb-6">
-          Người chiến thắng là:
-          <span class="font-semibold text-indigo-600">
-            {{ winner }}
-          </span>
+    <div v-if="show" class="win-overlay">
+      <div class="win-box">
+        <h2 class="win-title">CHÚC MỪNG</h2>
+        <p class="win-text">
+          Người chiến thắng: <strong>{{ winner }}</strong>
         </p>
 
-        <!-- Buttons -->
-        <div class="flex justify-center gap-4">
-          <!-- Exit -->
-          <button
-            @click="onClose"
-            class="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition"
+        <div class="win-actions">
+          <PixelButton color="yellow" class="px-btn" @click="onClose"
+            >Về trang chủ</PixelButton
           >
-            ⬅️ Về trang chủ
-          </button>
-
-          <!-- Play Again -->
-          <button
-            @click="onReplay"
-            class="px-5 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition"
+          <PixelButton color="blue" class="px-btn" @click="onReplay"
+            >Chơi lại</PixelButton
           >
-            🔄 Chơi lại
-          </button>
         </div>
       </div>
     </div>
@@ -84,15 +43,59 @@ function onReplay() {
 </template>
 
 <style scoped>
-/* Animation */
+.win-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+}
+.win-box {
+  width: min(92vw, 520px);
+  background: #9b6b2a;
+  border: 6px solid #3d200e;
+  padding: 16px;
+  text-align: center;
+  box-shadow:
+    inset 3px 3px 0 #c8924a,
+    inset -3px -3px 0 #6b3d18,
+    6px 6px 0 rgba(0, 0, 0, 0.45);
+
+  user-select: none;
+  -webkit-user-select: none;
+}
+.win-title {
+  margin: 0;
+  font-size: 48px;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 2px 2px 0 #5c3716;
+}
+.win-text {
+  margin: 10px 0 14px;
+  color: #fff;
+  font-size: 24px;
+}
+.win-actions {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.px-btn {
+  font-size: 24px;
+  text-align: center;
+  line-height: 1;
+  --pixel-text-nudge: -4px;
+}
 .modal-enter-active,
 .modal-leave-active {
-  transition: all 0.25s ease;
+  transition: all 0.18s ease;
 }
-
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.92);
 }
 </style>

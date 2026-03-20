@@ -2,6 +2,7 @@
 import AILevelModal from '@/components/AILevelModal.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import PixelButton from '@/components/pixel/PixelButton.vue';
 
 const router = useRouter();
 
@@ -52,184 +53,241 @@ const goGuide = () => {
 </script>
 
 <template>
-  <div
-    class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center"
-  >
-    <!-- Main Card -->
-    <div class="w-105 bg-white rounded-2xl shadow-xl overflow-hidden">
-      <!-- Header -->
-      <div
-        class="bg-linear-to-br from-blue-500 to-blue-600 text-white text-center py-8 px-6 relative"
-      >
-        <h1 class="text-3xl font-bold mb-2 tracking-wide">NIM GAME</h1>
-        <p class="text-blue-100 text-sm">
-          Trò chơi chiến thuật toán học kinh điển
-        </p>
-
-        <!-- Decorative dots -->
-        <div
-          class="absolute inset-0 opacity-20 bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-size-[16px_16px]"
-        ></div>
+  <div class="screen">
+    <div class="center-wrapper">
+      <!-- Title -->
+      <div class="text-center mb-1">
+        <h1 class="game-title">
+          <span class="title-nim">NIM</span>
+          <span class="title-game"> GAME</span>
+        </h1>
       </div>
 
-      <!-- Body -->
-      <div class="p-6 space-y-6">
+      <!-- Wooden Panel -->
+      <div class="wooden-panel">
         <!-- Mode Section -->
-        <div>
-          <p class="text-sm font-semibold text-gray-500 mb-3 tracking-wide">
-            CHẾ ĐỘ CHƠI
-          </p>
+        <div class="mode-box">
+          <p class="mode-heading">CHẾ ĐỘ CHƠI</p>
 
-          <div class="space-y-3">
-            <!-- Normal Mode -->
-            <label
-              class="flex items-center gap-3 py-2 px-4 rounded-xl border cursor-pointer transition"
-              :class="
-                variant === 'normal'
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-300'
-              "
-            >
-              <input
-                type="radio"
-                class="mt-1 accent-blue-500 scale-150"
-                value="normal"
-                v-model="variant"
-              />
+          <hr class="border-t-2 border-white mb-3" />
 
-              <div>
-                <p class="font-semibold text-gray-800">Chế độ thường</p>
-                <p class="text-sm text-gray-500">
-                  Người bốc cuối cùng sẽ
-                  <span class="text-blue-600 font-medium">THẮNG</span>.
-                </p>
-              </div>
-            </label>
+          <label
+            class="mode-row pixel-radio-row"
+            :class="{ 'mode-row--active': variant === 'normal' }"
+          >
+            <input
+              class="pixel-radio-input"
+              type="radio"
+              value="normal"
+              v-model="variant"
+            />
+            <span class="pixel-radio-box" aria-hidden="true"></span>
+            <div>
+              <p class="mode-name">Chế độ thường</p>
+              <p class="mode-desc">Người bốc cuối cùng sẽ THẮNG.</p>
+            </div>
+          </label>
 
-            <!-- Misère Mode -->
-            <label
-              class="flex items-center gap-3 py-2 px-4 rounded-xl border cursor-pointer transition"
-              :class="
-                variant === 'misere'
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-300'
-              "
-            >
-              <input
-                type="radio"
-                class="mt-1 accent-blue-500 scale-150"
-                value="misere"
-                v-model="variant"
-              />
-
-              <div>
-                <p class="font-semibold text-gray-800">Chế độ Misère</p>
-                <p class="text-sm text-gray-500">
-                  Người bốc cuối cùng sẽ
-                  <span class="text-red-500 font-medium">THUA</span>.
-                </p>
-              </div>
-            </label>
-          </div>
+          <label
+            class="mode-row mt-1 pixel-radio-row"
+            :class="{ 'mode-row--active': variant === 'misere' }"
+          >
+            <input
+              class="pixel-radio-input"
+              type="radio"
+              value="misere"
+              v-model="variant"
+            />
+            <span class="pixel-radio-box" aria-hidden="true"></span>
+            <div>
+              <p class="mode-name">Chế độ Misère</p>
+              <p class="mode-desc">Người bốc cuối cùng sẽ THUA.</p>
+            </div>
+          </label>
         </div>
 
-        <!-- Divider -->
-        <hr class="border-gray-200" />
-
-        <!-- Buttons -->
-        <div class="space-y-4">
-          <!-- PvP -->
-          <button
-            @click="clickPVP"
-            class="w-full flex items-center justify-center gap-2 cursor-pointer bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-semibold shadow transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m6-4a4 4 0 11-8 0 4 4 0 018 0zm6 4a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-3 mt-5">
+          <PixelButton color="blue" @click="clickPVP" class="action-btn">
             Người vs Người
-          </button>
-
-          <!-- PvE -->
-          <button
-            @click="clickPVE"
-            class="w-full flex items-center justify-center gap-2 cursor-pointer bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-semibold shadow transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
+          </PixelButton>
+          <PixelButton color="green" @click="clickPVE" class="action-btn">
             Người vs Máy
-          </button>
-
-          <!-- Saved games -->
-          <button
-            @click="goSavedGames"
-            class="w-full flex items-center justify-center gap-2 cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"
-              />
-            </svg>
+          </PixelButton>
+          <PixelButton color="yellow" @click="goSavedGames" class="action-btn">
             Trò chơi đã lưu
-          </button>
-
-          <!-- Guide -->
-          <button
-            @click="goGuide"
-            class="w-full flex items-center justify-center gap-2 cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"
-              />
-            </svg>
+          </PixelButton>
+          <PixelButton color="gray" @click="goGuide" class="action-btn">
             Hướng dẫn chơi
-          </button>
+          </PixelButton>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal AI Level -->
   <AILevelModal :show="showModal" @select="selectLevel" @close="closeModal" />
 </template>
+
+<style scoped>
+/* ── Background ─────────────────────────────── */
+.screen {
+  min-height: 100vh;
+  background-image: url('/backgound-forest.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.center-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Title ──────────────────────────────────── */
+.game-title {
+  line-height: 1;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+.title-nim {
+  font-size: 100px;
+  color: #60c8ff;
+  text-shadow:
+    3px 3px 0 #0a4878,
+    -2px -2px 0 #0a4878,
+    2px -2px 0 #0a4878,
+    -2px 2px 0 #0a4878;
+}
+
+.title-game {
+  font-size: 100px;
+  color: #f7d51d;
+  text-shadow:
+    3px 3px 0 #7a5700,
+    -2px -2px 0 #7a5700,
+    2px -2px 0 #7a5700,
+    -2px 2px 0 #7a5700;
+}
+
+/* ── Wooden Panel ───────────────────────────── */
+.wooden-panel {
+  max-width: 600px;
+  /* width: 600px; */
+  background-color: #9b6b2a;
+  border: 6px solid #3d200e;
+  padding: 20px;
+  box-shadow:
+    inset 3px 3px 0 #c8924a,
+    inset -3px -3px 0 #6b3d18,
+    5px 5px 0 rgba(0, 0, 0, 0.45);
+  /* pixel corners */
+  image-rendering: pixelated;
+}
+
+/* ── Mode Box ───────────────────────────────── */
+.mode-box {
+  color: #fff;
+  line-height: 1;
+  background-color: #b87e35;
+  border: 3px solid #3d200e;
+  padding: 14px;
+  box-shadow:
+    inset 2px 2px 0 #d4a060,
+    inset -2px -2px 0 #8a5820;
+}
+
+.mode-heading {
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.mode-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border: 2px solid transparent;
+  transition: background 0.1s;
+}
+
+.mode-row--active {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: #f7d51d;
+}
+
+.mode-name {
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+
+.mode-desc {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+/* ── Pixel Radio Buttons ────────────────────── */
+.pixel-radio-row {
+  position: relative;
+  gap: 12px;
+}
+
+.pixel-radio-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.pixel-radio-box {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 4px solid #3d200e;
+  background: #eecb92;
+  box-shadow:
+    inset 2px 2px 0 #fbe4b8,
+    inset -2px -2px 0 #8a5820;
+  image-rendering: pixelated;
+  position: relative;
+}
+
+.pixel-radio-input:checked + .pixel-radio-box {
+  background: #f7d51d;
+}
+
+.pixel-radio-input:checked + .pixel-radio-box::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: 5px;
+  top: 5px;
+  background: #3d200e;
+  box-shadow: 2px 2px 0 #8a5820;
+}
+
+.pixel-radio-input:focus-visible + .pixel-radio-box {
+  outline: 3px solid #60c8ff;
+  outline-offset: 2px;
+}
+
+/* ── Action Buttons ─────────────────────────── */
+.action-btn {
+  font-size: 32px;
+  width: 100%;
+  text-align: center;
+  line-height: 1;
+  --pixel-text-nudge: -6px;
+}
+</style>

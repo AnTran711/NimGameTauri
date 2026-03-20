@@ -31,6 +31,10 @@ export const useGameStore = defineStore('game', () => {
   const currentGameId = ref(null); // ID của game đang chơi
 
   // actions
+  function deepClone(data) {
+    return JSON.parse(JSON.stringify(data));
+  }
+
   function startNewGame({ mode = 'PVP', vra = 'normal', level = 'easy' } = {}) {
     heaps.value = initHeaps();
     gameMode.value = mode;
@@ -88,7 +92,7 @@ export const useGameStore = defineStore('game', () => {
     currentPlayer.value = currentPlayer.value === 1 ? 2 : 1;
   }
 
-  function handleGameOver() {
+  async function handleGameOver() {
     gameOver.value = true;
     isGameStarted.value = false;
 
@@ -100,14 +104,14 @@ export const useGameStore = defineStore('game', () => {
     }
 
     // Nếu game kết thúc thì xóa game khỏi lịch sử lưu nếu có
-    const savedGameStore = useSavedGameStore();
     if (currentGameId.value) {
-      const index = savedGameStore.savedGames.findIndex(
-        (g) => g.id === currentGameId.value
-      );
-      if (index !== -1) {
-        savedGameStore.savedGames.splice(index, 1);
-        savedGameStore.writeSavedGames();
+      const savedGameStore = useSavedGameStore();
+      const idToDelete = currentGameId.value;
+      currentGameId.value = null;
+      try {
+        savedGameStore.deleteSavedGame(idToDelete);
+      } catch (error) {
+        console.error('Xóa save khi game kết thúc thất bại:', error);
       }
     }
   }
@@ -131,39 +135,40 @@ export const useGameStore = defineStore('game', () => {
   // Xuất toàn bộ state hiện tại thành object để lưu
   function exportGameState() {
     return {
-      heaps: JSON.parse(JSON.stringify(heaps.value)),
+      heaps: deepClone(heaps.value),
       currentPlayer: currentPlayer.value,
       gameOver: gameOver.value,
       winner: winner.value,
       gameMode: gameMode.value,
       variant: variant.value,
       aiLevel: aiLevel.value,
-      historyMoves: JSON.parse(JSON.stringify(historyMoves.value))
+      historyMoves: deepClone(historyMoves.value)
     };
   }
 
   // Nạp state từ object đã lưu vào store
   function importGameState(state, id = null) {
-    if (!state || !state.heaps) {
+    if (!state || !Array.isArray(state.heaps)) {
       console.error('importGameState: state không hợp lệ', state);
       return;
     }
-    heaps.value = state.heaps;
-    currentPlayer.value = state.currentPlayer;
-    gameOver.value = state.gameOver;
-    winner.value = state.winner;
-    gameMode.value = state.gameMode;
-    variant.value = state.variant;
-    aiLevel.value = state.aiLevel;
-    historyMoves.value = state.historyMoves;
+
+    heaps.value = deepClone(state.heaps);
+    currentPlayer.value = state.currentPlayer ?? 1;
+    gameOver.value = !!state.gameOver;
+    winner.value = state.winner ?? null;
+    gameMode.value = state.gameMode ?? 'PVP';
+    variant.value = state.variant ?? 'normal';
+    aiLevel.value = state.aiLevel ?? 'easy';
+    historyMoves.value = deepClone(state.historyMoves ?? []);
     activeHeapId.value = null;
     selectedStones.value = {};
-    isGameStarted.value = true;
+    isGameStarted.value = !gameOver.value;
     isChanged.value = false;
     currentGameId.value = id;
   }
 
-  // Kiểm tra game có đang chơi dở không (chưa kết thúc VÀ đã có nước đi)
+  // Kiểm tra game có đang chơi dở không (chưa kết thúc và đã có nước đi)
   function isGameInProgress() {
     return (
       isGameStarted.value && !gameOver.value && historyMoves.value.length > 0
@@ -183,6 +188,7 @@ export const useGameStore = defineStore('game', () => {
     historyMoves,
     isGameStarted,
     isChanged,
+    currentGameId,
     startNewGame,
     makeMove,
     switchPlayer,

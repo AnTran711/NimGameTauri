@@ -6,10 +6,9 @@ export function applyMove(heaps, heapIndex, removeCount) {
     throw new Error('Invalid move');
   }
 
-  const newHeaps = [...heaps];
-  newHeaps[heapIndex].stones -= removeCount;
-
-  return newHeaps;
+  return heaps.map((heap, index) =>
+    index === heapIndex ? { ...heap, stones: heap.stones - removeCount } : heap
+  );
 }
 
 // Hàm kiểm tra trạng thái kết thúc game

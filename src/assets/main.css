@@ -1,1 +1,14 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'PixelFont';
+  src: url('@/assets/fonts/PixelFont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  font-family: 'PixelFont', monospace;
+  font-size: 24px;
+}
