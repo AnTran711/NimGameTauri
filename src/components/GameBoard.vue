@@ -97,7 +97,7 @@ defineExpose({
     <div class="heap-grid">
       <HeapCard
         v-for="heap in gameStore.heaps"
-        :key="heap.id"
+        :key="gameStore.gameRenderKey + '-' + heap.id"
         :heap="heap"
         :active-heap-id="gameStore.activeHeapId"
         :selected-stones="getSelectedStonesForHeap(heap.id)"

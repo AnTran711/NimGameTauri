@@ -34,8 +34,7 @@ const disableButtonOnAITurn = computed(
         class="px-btn"
         :disabled="disableButtonOnAITurn"
       >
-        <span v-if="disableButtonOnAITurn">AI đang nghĩ...</span>
-        <span v-else>Hủy chọn</span>
+        <span>Hủy chọn</span>
       </PixelButton>
 
       <PixelButton
@@ -44,8 +43,7 @@ const disableButtonOnAITurn = computed(
         class="px-btn"
         :disabled="disableButtonOnAITurn"
       >
-        <span v-if="disableButtonOnAITurn">AI đang nghĩ...</span>
-        <span v-else>Xác nhận bốc</span>
+        <span>Xác nhận bốc</span>
       </PixelButton>
     </div>
   </footer>

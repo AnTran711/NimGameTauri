@@ -7,6 +7,9 @@ import { misereCheckWinner } from '@/logic/misereLogic';
 import { getEasyMove, getHardMove } from '@/ai';
 import { useSavedGameStore } from './savedGameStore';
 
+const STONE_ANIMATION_MS = 240;
+const AI_MOVE_DELAY_MS = STONE_ANIMATION_MS + 110;
+
 export const useGameStore = defineStore('game', () => {
   // states
   const heaps = ref([]); // [{id: , stones: },...]
@@ -30,12 +33,15 @@ export const useGameStore = defineStore('game', () => {
 
   const currentGameId = ref(null); // ID của game đang chơi
 
+  const gameRenderKey = ref(0); // Key để ép component render lại khi load game mới (nếu cần)
+
   // actions
   function deepClone(data) {
     return JSON.parse(JSON.stringify(data));
   }
 
   function startNewGame({ mode = 'PVP', vra = 'normal', level = 'easy' } = {}) {
+    gameRenderKey.value++; // Tăng key để ép render lại nếu cần
     heaps.value = initHeaps();
     gameMode.value = mode;
     variant.value = vra;
@@ -109,7 +115,7 @@ export const useGameStore = defineStore('game', () => {
       const idToDelete = currentGameId.value;
       currentGameId.value = null;
       try {
-        savedGameStore.deleteSavedGame(idToDelete);
+        await savedGameStore.deleteSavedGame(idToDelete);
       } catch (error) {
         console.error('Xóa save khi game kết thúc thất bại:', error);
       }
@@ -127,7 +133,7 @@ export const useGameStore = defineStore('game', () => {
 
     setTimeout(() => {
       makeMove(move.heapIndex, move.removeCount);
-    }, 200);
+    }, AI_MOVE_DELAY_MS);
   }
 
   // === SAVE / LOAD ===
@@ -166,6 +172,10 @@ export const useGameStore = defineStore('game', () => {
     isGameStarted.value = !gameOver.value;
     isChanged.value = false;
     currentGameId.value = id;
+
+    if (gameMode.value === 'PVE' && currentPlayer.value === 2) {
+      aiMove();
+    }
   }
 
   // Kiểm tra game có đang chơi dở không (chưa kết thúc và đã có nước đi)
@@ -189,6 +199,7 @@ export const useGameStore = defineStore('game', () => {
     isGameStarted,
     isChanged,
     currentGameId,
+    gameRenderKey,
     startNewGame,
     makeMove,
     switchPlayer,

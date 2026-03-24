@@ -6,8 +6,20 @@ defineProps({
 </script>
 
 <template>
-  <img v-if="selected" class="stone" src="/stone-active.png" alt="" />
-  <img v-else class="stone" src="/stone.png" alt="" />
+  <img
+    v-if="selected"
+    class="stone"
+    :class="{ 'stone--disabled': disabled }"
+    src="/stone-active.png"
+    alt=""
+  />
+  <img
+    v-else
+    class="stone"
+    :class="{ 'stone--disabled': disabled }"
+    src="/stone.png"
+    alt=""
+  />
 </template>
 
 <style scoped>
@@ -16,5 +28,22 @@ defineProps({
   height: 32px;
   image-rendering: pixelated;
   cursor: pointer;
+  transition:
+    transform 120ms ease,
+    filter 120ms ease;
+}
+
+.stone:not(.stone--disabled):hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.stone:not(.stone--disabled):active {
+  transform: translateY(1px) scale(0.95);
+}
+
+.stone--disabled {
+  cursor: default;
+  pointer-events: none;
 }
 </style>

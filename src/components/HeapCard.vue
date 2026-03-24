@@ -18,6 +18,10 @@ const isDisabled = computed(
     props.heap.stones === 0
 );
 
+const stoneList = computed(() =>
+  Array.from({ length: props.heap.stones }, (_, i) => i + 1)
+);
+
 function onStoneClick(index) {
   if (isDisabled.value) return;
   emit('toggleStone', props.heap.id, index);
@@ -55,15 +59,15 @@ function toggleSelectAll() {
       <span>Còn lại: {{ heap.stones }}</span>
     </div>
 
-    <div class="stone-grid">
+    <TransitionGroup name="stone-pop" tag="div" class="stone-grid">
       <Stone
-        v-for="i in heap.stones"
+        v-for="i in stoneList"
         :key="i"
         :selected="isStoneSelected(i)"
         :disabled="isDisabled"
         @click.stop="onStoneClick(i)"
       />
-    </div>
+    </TransitionGroup>
 
     <label class="select-all" :class="{ off: isDisabled }">
       <input
@@ -135,6 +139,30 @@ function toggleSelectAll() {
   align-content: center;
   place-items: center;
   margin: 2px 0 4px;
+}
+
+.stone-pop-enter-active,
+.stone-pop-leave-active {
+  transition:
+    transform 240ms ease,
+    opacity 240ms ease;
+  will-change: transform, opacity;
+}
+
+.stone-pop-enter-from {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.75);
+  filter: brightness(1.25);
+}
+
+.stone-pop-leave-to {
+  opacity: 0;
+  transform: translateY(-14px) scale(0.65) rotate(-8deg);
+  filter: brightness(1.4);
+}
+
+.stone-pop-move {
+  transition: transform 180ms ease;
 }
 .select-all {
   margin-top: 8px;
