@@ -7,8 +7,7 @@ import { misereCheckWinner } from '@/logic/misereLogic';
 import { getEasyMove, getHardMove } from '@/ai';
 import { useSavedGameStore } from './savedGameStore';
 
-const STONE_ANIMATION_MS = 240;
-const AI_MOVE_DELAY_MS = STONE_ANIMATION_MS + 110;
+const AI_MOVE_DELAY_MS = 400;
 
 export const useGameStore = defineStore('game', () => {
   // states
@@ -33,14 +32,26 @@ export const useGameStore = defineStore('game', () => {
 
   const currentGameId = ref(null); // ID của game đang chơi
 
-  const gameRenderKey = ref(0); // Key để ép component render lại khi load game mới (nếu cần)
+  const gameRenderKey = ref(0); // Key để ép component render lại khi load game mới
+
+  const pendingAIMove = ref(null); // Biến lưu nước đi của AI đang chờ thực hiện (để tránh gọi AI nhiều lần khi load game)
+  const aiMoveTimerId = ref(null); // Biến lưu ID của timer đang chờ thực hiện nước đi của AI
 
   // actions
   function deepClone(data) {
     return JSON.parse(JSON.stringify(data));
   }
 
+  function clearAIMoveTimer() {
+    if (aiMoveTimerId.value !== null) {
+      clearTimeout(aiMoveTimerId.value);
+      aiMoveTimerId.value = null;
+    }
+  }
+
   function startNewGame({ mode = 'PVP', vra = 'normal', level = 'easy' } = {}) {
+    clearAIMoveTimer();
+
     gameRenderKey.value++; // Tăng key để ép render lại nếu cần
     heaps.value = initHeaps();
     gameMode.value = mode;
@@ -55,6 +66,7 @@ export const useGameStore = defineStore('game', () => {
     isGameStarted.value = true;
     isChanged.value = false;
     currentGameId.value = null;
+    pendingAIMove.value = null;
 
     if (gameMode.value === 'PVE' && currentPlayer.value === 2) {
       aiMove();
@@ -99,6 +111,9 @@ export const useGameStore = defineStore('game', () => {
   }
 
   async function handleGameOver() {
+    clearAIMoveTimer();
+    pendingAIMove.value = null;
+
     gameOver.value = true;
     isGameStarted.value = false;
 
@@ -123,17 +138,61 @@ export const useGameStore = defineStore('game', () => {
   }
 
   function aiMove() {
-    let move;
+    clearAIMoveTimer();
 
-    if (aiLevel.value === 'easy') {
-      move = getEasyMove(heaps.value);
-    } else {
-      move = getHardMove(heaps.value, variant.value);
+    if (
+      gameMode.value !== 'PVE' ||
+      currentPlayer.value !== 2 ||
+      gameOver.value
+    ) {
+      return;
     }
 
-    setTimeout(() => {
-      makeMove(move.heapIndex, move.removeCount);
+    aiMoveTimerId.value = setTimeout(() => {
+      aiMoveTimerId.value = null;
+
+      if (
+        gameMode.value !== 'PVE' ||
+        currentPlayer.value !== 2 ||
+        gameOver.value
+      ) {
+        return;
+      }
+
+      let move;
+      if (aiLevel.value === 'easy') {
+        move = getEasyMove(heaps.value);
+      } else {
+        move = getHardMove(heaps.value, variant.value);
+      }
+
+      if (!move || move.heapIndex < 0 || move.removeCount <= 0) return;
+
+      const heap = heaps.value[move.heapIndex];
+      if (!heap || heap.stones <= 0) return;
+
+      pendingAIMove.value = {
+        heapIndex: move.heapIndex,
+        heapId: heap.id,
+        removeCount: move.removeCount
+      };
     }, AI_MOVE_DELAY_MS);
+  }
+
+  // Hàm này sẽ được gọi sau khi animation đá hoàn thành để thực sự thực hiện nước đi của AI
+  function commitAIMove() {
+    if (!pendingAIMove.value) return;
+    if (
+      gameOver.value ||
+      gameMode.value !== 'PVE' ||
+      currentPlayer.value !== 2
+    ) {
+      pendingAIMove.value = null;
+      return;
+    }
+    const move = pendingAIMove.value;
+    pendingAIMove.value = null;
+    makeMove(move.heapIndex, move.removeCount);
   }
 
   // === SAVE / LOAD ===
@@ -159,6 +218,8 @@ export const useGameStore = defineStore('game', () => {
       return;
     }
 
+    clearAIMoveTimer();
+
     heaps.value = deepClone(state.heaps);
     currentPlayer.value = state.currentPlayer ?? 1;
     gameOver.value = !!state.gameOver;
@@ -172,6 +233,7 @@ export const useGameStore = defineStore('game', () => {
     isGameStarted.value = !gameOver.value;
     isChanged.value = false;
     currentGameId.value = id;
+    pendingAIMove.value = null;
 
     if (gameMode.value === 'PVE' && currentPlayer.value === 2) {
       aiMove();
@@ -200,6 +262,7 @@ export const useGameStore = defineStore('game', () => {
     isChanged,
     currentGameId,
     gameRenderKey,
+    pendingAIMove,
     startNewGame,
     makeMove,
     switchPlayer,
@@ -207,6 +270,7 @@ export const useGameStore = defineStore('game', () => {
     aiMove,
     exportGameState,
     importGameState,
-    isGameInProgress
+    isGameInProgress,
+    commitAIMove
   };
 });

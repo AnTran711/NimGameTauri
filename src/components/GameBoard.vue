@@ -1,10 +1,20 @@
 <script setup>
 import HeapCard from './HeapCard.vue';
 import { useGameStore } from '@/stores/gameStore';
+import { reactive, ref, watch } from 'vue';
+
+const AI_PREVIEW_MS = 800;
+const PICK_ANIMATION_MS = 240;
+
+const aiSelectedStones = reactive({}); // { heapId: [index1, index2, ...] }
+const pickingStones = reactive({}); // { heapId: [index1, index2, ...] }
+const isPicking = ref(false);
 
 const gameStore = useGameStore();
 
 function toggleStone(heapId, stoneIndex) {
+  if (isPicking.value) return;
+
   // nếu chưa chọn đống nào -> set đống hiện tại
   if (gameStore.activeHeapId === null) {
     gameStore.activeHeapId = heapId;
@@ -41,31 +51,77 @@ function cancelSelection() {
   gameStore.selectedStones = {};
 }
 
-function confirmPick() {
-  if (!gameStore.activeHeapId) return;
+async function confirmPick() {
+  if (!gameStore.activeHeapId || isPicking.value) return;
 
-  // lấy số lượng đá đã chọn
-  const selectedCount =
-    gameStore.selectedStones[gameStore.activeHeapId]?.length || 0;
+  const heapId = gameStore.activeHeapId;
+  const pickedIndexes = [...(gameStore.selectedStones[heapId] || [])];
+  if (pickedIndexes.length === 0) return;
 
-  if (selectedCount === 0) return;
+  isPicking.value = true;
+  pickingStones[heapId] = pickedIndexes;
 
-  // tìm đống và giảm số đá
-  const heapIndex = gameStore.heaps.indexOf(
-    gameStore.heaps.find((h) => h.id === gameStore.activeHeapId)
-  );
+  await new Promise((resolve) => setTimeout(resolve, PICK_ANIMATION_MS));
 
-  gameStore.makeMove(heapIndex, selectedCount);
+  const heapIndex = gameStore.heaps.findIndex((h) => h.id === heapId);
+  gameStore.makeMove(heapIndex, pickedIndexes.length);
 
-  // reset trạng thái chọn
+  delete pickingStones[heapId];
   cancelSelection();
+  isPicking.value = false;
 }
 
+// Hàm lấy ra các index của viên đá ở cuối đống để animation khi AI bốc
+function getTailIndexes(total, removeCount) {
+  // Ví dụ: total=5, removeCount=2 -> trả về [4, 5]
+  const start = Math.max(1, total - removeCount + 1);
+  return Array.from({ length: removeCount }, (_, i) => start + i);
+}
+
+// Watch biến pendingAIMove để khi có nước đi mới từ AI, thực hiện animation bốc đá
+watch(
+  () => gameStore.pendingAIMove,
+  async (move) => {
+    if (!move) return;
+
+    const heap = gameStore.heaps[move.heapIndex];
+    if (!heap) {
+      gameStore.commitAIMove();
+      return;
+    }
+
+    const indexes = getTailIndexes(heap.stones, move.removeCount);
+
+    isPicking.value = true;
+
+    // Bước 1: chỉ đổi trạng thái selected
+    aiSelectedStones[move.heapId] = indexes;
+
+    // Chờ để người chơi thấy đá được AI chọn
+    await new Promise((resolve) => setTimeout(resolve, AI_PREVIEW_MS));
+
+    // Bước 2: bắt đầu animation bốc
+    pickingStones[move.heapId] = indexes;
+
+    await new Promise((resolve) => setTimeout(resolve, PICK_ANIMATION_MS));
+
+    gameStore.commitAIMove();
+
+    delete pickingStones[move.heapId];
+    delete aiSelectedStones[move.heapId];
+    isPicking.value = false;
+  }
+);
+
 function getSelectedStonesForHeap(heapId) {
-  return gameStore.selectedStones[heapId] || [];
+  const playerSelected = gameStore.selectedStones[heapId] || [];
+  const aiSelected = aiSelectedStones[heapId] || [];
+  return [...new Set([...playerSelected, ...aiSelected])];
 }
 
 function handleToggleSelectAll(heapId, selectAll) {
+  if (isPicking.value) return;
+
   const heap = gameStore.heaps.find((h) => h.id === heapId);
   if (heap) {
     if (selectAll) {
@@ -101,6 +157,7 @@ defineExpose({
         :heap="heap"
         :active-heap-id="gameStore.activeHeapId"
         :selected-stones="getSelectedStonesForHeap(heap.id)"
+        :picked-stones="pickingStones[heap.id] || []"
         @toggle-stone="toggleStone"
         @toggle-select-all="handleToggleSelectAll"
       />

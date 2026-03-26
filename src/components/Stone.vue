@@ -1,7 +1,8 @@
 <script setup>
 defineProps({
   selected: Boolean,
-  disabled: Boolean
+  disabled: Boolean,
+  picked: Boolean
 });
 </script>
 
@@ -9,14 +10,14 @@ defineProps({
   <img
     v-if="selected"
     class="stone"
-    :class="{ 'stone--disabled': disabled }"
+    :class="{ 'stone--disabled': disabled, 'stone--picked': picked }"
     src="/stone-active.png"
     alt=""
   />
   <img
     v-else
     class="stone"
-    :class="{ 'stone--disabled': disabled }"
+    :class="{ 'stone--disabled': disabled, 'stone--picked': picked }"
     src="/stone.png"
     alt=""
   />
@@ -45,5 +46,24 @@ defineProps({
 .stone--disabled {
   cursor: default;
   pointer-events: none;
+}
+
+.stone--picked {
+  animation: stone-pick 240ms ease forwards;
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes stone-pick {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.68) rotate(-8deg);
+    filter: brightness(1.25);
+  }
 }
 </style>
