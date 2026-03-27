@@ -29,9 +29,7 @@ defineProps({
   height: 32px;
   image-rendering: pixelated;
   cursor: pointer;
-  transition:
-    transform 120ms ease,
-    filter 120ms ease;
+  transition: filter 120ms ease;
 }
 
 .stone:not(.stone--disabled):hover {

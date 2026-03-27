@@ -2,6 +2,39 @@
 import { computed } from 'vue';
 import Stone from './Stone.vue';
 
+const COMPACTION_DELAY_MS = 240;
+const GRID_COLS = 5;
+const CELL_SIZE = 32;
+const CELL_GAP = 6;
+const CELL_STEP = CELL_SIZE + CELL_GAP;
+
+function getCompactionStyle(index) {
+  if (!props.pickedStones.length) return null;
+  if (props.pickedStones.includes(index)) return null;
+
+  // Có bao nhiêu viên bị bốc nằm trước viên hiện tại
+  const shiftCount = props.pickedStones.filter(
+    (picked) => picked < index
+  ).length;
+  if (!shiftCount) return null;
+
+  const from = index - 1;
+  const to = index - shiftCount - 1;
+
+  const fromRow = Math.floor(from / GRID_COLS);
+  const fromCol = from % GRID_COLS;
+  const toRow = Math.floor(to / GRID_COLS);
+  const toCol = to % GRID_COLS;
+
+  const dx = (toCol - fromCol) * CELL_STEP;
+  const dy = (toRow - fromRow) * CELL_STEP;
+
+  return {
+    transform: `translate(${dx}px, ${dy}px)`,
+    '--compact-delay': `${COMPACTION_DELAY_MS}ms`
+  };
+}
+
 const emit = defineEmits(['toggleStone', 'toggleSelectAll']);
 
 const props = defineProps({
@@ -25,9 +58,20 @@ const isDisabled = computed(
     props.heap.stones === 0
 );
 
-const stoneList = computed(() =>
-  Array.from({ length: props.heap.stones }, (_, i) => i + 1)
+// Tổng số ô hiển thị (có thể lớn hơn số đá hiện tại nếu có initialStones)
+const totalSlots = computed(
+  () => props.heap.initialStones ?? props.heap.stones
 );
+
+// Tạo một mảng từ 1 đến totalSlots để vẽ lưới đá
+const stoneList = computed(() =>
+  Array.from({ length: totalSlots.value }, (_, i) => i + 1)
+);
+
+// Kiểm tra ô đá có nên hiển thị hay không
+function isStoneVisible(index) {
+  return index <= props.heap.stones || props.pickedStones.includes(index);
+}
 
 function onStoneClick(index) {
   if (isDisabled.value) return;
@@ -71,14 +115,20 @@ function toggleSelectAll() {
     </div>
 
     <div class="stone-grid">
-      <Stone
+      <div
         v-for="i in stoneList"
         :key="i"
-        :selected="isStoneSelected(i)"
-        :disabled="isDisabled"
-        :picked="isStonePicked(i)"
-        @click.stop="onStoneClick(i)"
-      />
+        class="stone-cell"
+        :style="getCompactionStyle(i)"
+      >
+        <Stone
+          v-if="isStoneVisible(i)"
+          :selected="isStoneSelected(i)"
+          :disabled="isDisabled"
+          :picked="isStonePicked(i)"
+          @click.stop="onStoneClick(i)"
+        />
+      </div>
     </div>
 
     <label class="select-all" :class="{ off: isDisabled }">
@@ -148,7 +198,7 @@ function toggleSelectAll() {
   grid-auto-rows: 32px;
   gap: 6px;
   justify-content: center;
-  align-content: center;
+  align-content: start;
   place-items: center;
   margin: 2px 0 4px;
 }
@@ -209,5 +259,13 @@ function toggleSelectAll() {
 .select-all.off {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.stone-cell {
+  width: 32px;
+  height: 32px;
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--compact-delay, 0ms);
+  will-change: transform;
 }
 </style>

@@ -8,8 +8,12 @@ export function initHeaps({
 } = {}) {
   const heapCount = randomInt(minHeaps, maxHeaps);
 
-  return Array.from({ length: heapCount }, (_, i) => ({
-    id: i + 1,
-    stones: randomInt(minStones, maxStones)
-  }));
+  return Array.from({ length: heapCount }, (_, i) => {
+    const stones = randomInt(minStones, maxStones);
+    return {
+      id: i + 1,
+      stones,
+      initialStones: stones
+    };
+  });
 }
