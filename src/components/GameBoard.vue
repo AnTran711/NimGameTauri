@@ -78,6 +78,8 @@ function getTailIndexes(total, removeCount) {
   return Array.from({ length: removeCount }, (_, i) => start + i);
 }
 
+const heapIdAIisPicking = ref(null);
+
 // Watch biến pendingAIMove để khi có nước đi mới từ AI, thực hiện animation bốc đá
 watch(
   () => gameStore.pendingAIMove,
@@ -96,6 +98,7 @@ watch(
 
     // Bước 1: chỉ đổi trạng thái selected
     aiSelectedStones[move.heapId] = indexes;
+    heapIdAIisPicking.value = move.heapId;
 
     // Chờ để người chơi thấy đá được AI chọn
     await new Promise((resolve) => setTimeout(resolve, AI_PREVIEW_MS));
@@ -109,6 +112,7 @@ watch(
 
     delete pickingStones[move.heapId];
     delete aiSelectedStones[move.heapId];
+    heapIdAIisPicking.value = null;
     isPicking.value = false;
   }
 );
@@ -155,7 +159,7 @@ defineExpose({
         v-for="heap in gameStore.heaps"
         :key="gameStore.gameRenderKey + '-' + heap.id"
         :heap="heap"
-        :active-heap-id="gameStore.activeHeapId"
+        :active-heap-id="gameStore.activeHeapId || heapIdAIisPicking"
         :selected-stones="getSelectedStonesForHeap(heap.id)"
         :picked-stones="pickingStones[heap.id] || []"
         @toggle-stone="toggleStone"
