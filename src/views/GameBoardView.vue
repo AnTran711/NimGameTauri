@@ -155,7 +155,7 @@ onBeforeUnmount(() => {
   min-height: 100vh;
   background-image:
     linear-gradient(rgba(14, 9, 4, 0.45), rgba(14, 9, 4, 0.45)),
-    url('/backgound-forest.jpg');
+    url('/background-forest.jpg');
   background-size: cover;
   background-position: center;
   padding: 16px 12px;

@@ -50,6 +50,10 @@ const goSavedGames = () => {
 const goGuide = () => {
   router.push('/guide');
 };
+
+const goSettings = () => {
+  router.push('/settings');
+};
 </script>
 
 <template>
@@ -120,6 +124,9 @@ const goGuide = () => {
           <PixelButton color="gray" @click="goGuide" class="action-btn">
             Hướng dẫn chơi
           </PixelButton>
+          <PixelButton color="brown" @click="goSettings" class="action-btn">
+            Cài đặt
+          </PixelButton>
         </div>
       </div>
     </div>
@@ -132,7 +139,7 @@ const goGuide = () => {
 /* ── Background ─────────────────────────────── */
 .screen {
   min-height: 100vh;
-  background-image: url('/backgound-forest.jpg');
+  background-image: url('/background-forest.jpg');
   background-size: cover;
   background-position: center;
   display: flex;

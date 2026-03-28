@@ -1,5 +1,6 @@
 <script setup>
 import { computed, useAttrs } from 'vue';
+import { useMusicStore } from '@/stores/musicStore';
 
 const props = defineProps({
   color: {
@@ -13,6 +14,7 @@ const props = defineProps({
 });
 
 const attrs = useAttrs();
+const musicStore = useMusicStore();
 
 const colorClass = computed(() => {
   const map = {
@@ -20,11 +22,17 @@ const colorClass = computed(() => {
     red: 'bg-red-500 hover:bg-red-400 text-white',
     blue: 'bg-blue-500 hover:bg-blue-400 text-white',
     green: 'bg-green-500 hover:bg-green-400 text-white',
-    gray: 'bg-gray-400 hover:bg-gray-300'
+    gray: 'bg-gray-400 hover:bg-gray-300',
+    brown: 'bg-[#8B4513] hover:bg-[#A0522D] text-white'
   };
 
   return map[props.color] || map.gray;
 });
+
+function onClickWithSound() {
+  if (props.disabled) return;
+  musicStore.playButtonClick();
+}
 </script>
 
 <template>
@@ -34,6 +42,7 @@ const colorClass = computed(() => {
     class="pixel-btn px-2 py-1 border-4 border-black font-bold flex items-center justify-center leading-none select-none transition-all duration-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
     v-bind="attrs"
     :class="colorClass"
+    @click="onClickWithSound"
   >
     <span class="pixel-btn__label"><slot></slot></span>
   </button>

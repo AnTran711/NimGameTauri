@@ -5,11 +5,14 @@ import { initFirstPlayer } from '@/logic/initFirstPlayer';
 import { applyMove, isGameOver, normalCheckWinner } from '@/logic/nimLogic';
 import { misereCheckWinner } from '@/logic/misereLogic';
 import { getEasyMove, getHardMove } from '@/ai';
-import { useSavedGameStore } from './savedGameStore';
+import { useSavedGameStore } from '@/stores/savedGameStore';
+import { useGameSettingsStore } from '@/stores/gameSettingsStore';
 
 const AI_MOVE_DELAY_MS = 400;
 
 export const useGameStore = defineStore('game', () => {
+  const gameSettingsStore = useGameSettingsStore();
+
   // states
   const heaps = ref([]); // [{id: , stones: },...]
   const currentPlayer = ref(1); // PVP: 1 -> player1, 2 -> player2 || PVE: 1 -> human, 2 -> computer
@@ -53,7 +56,12 @@ export const useGameStore = defineStore('game', () => {
     clearAIMoveTimer();
 
     gameRenderKey.value++; // Tăng key để ép render lại nếu cần
-    heaps.value = initHeaps();
+    heaps.value = initHeaps({
+      minHeaps: gameSettingsStore.minHeaps,
+      maxHeaps: gameSettingsStore.maxHeaps,
+      minStones: gameSettingsStore.minStones,
+      maxStones: gameSettingsStore.maxStones
+    });
     gameMode.value = mode;
     variant.value = vra;
     aiLevel.value = level;

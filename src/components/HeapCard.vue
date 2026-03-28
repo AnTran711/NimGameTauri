@@ -1,12 +1,15 @@
 <script setup>
 import { computed } from 'vue';
 import Stone from './Stone.vue';
+import { useMusicStore } from '@/stores/musicStore';
 
 const COMPACTION_DELAY_MS = 240;
 const GRID_COLS = 5;
 const CELL_SIZE = 32;
 const CELL_GAP = 6;
 const CELL_STEP = CELL_SIZE + CELL_GAP;
+
+const musicStore = useMusicStore();
 
 function getCompactionStyle(index) {
   if (!props.pickedStones.length) return null;
@@ -75,6 +78,7 @@ function isStoneVisible(index) {
 
 function onStoneClick(index) {
   if (isDisabled.value) return;
+  musicStore.playStoneClick();
   emit('toggleStone', props.heap.id, index);
 }
 
@@ -96,6 +100,7 @@ const isAllSelected = computed(() => {
 // Toggle chọn tất cả / bỏ chọn tất cả
 function toggleSelectAll() {
   if (isDisabled.value) return;
+  musicStore.playStoneClick();
   emit('toggleSelectAll', props.heap.id, !isAllSelected.value);
 }
 </script>

@@ -3,7 +3,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import GuideView from '@/views/GuideView.vue';
 import GameBoardView from '@/views/GameBoardView.vue';
-import SavedGamesView from '../views/SavedGamesView.vue';
+import SavedGamesView from '@/views/SavedGamesView.vue';
+import SettingView from '@/views/SettingView.vue';
 
 const routes = [
   {
@@ -25,6 +26,11 @@ const routes = [
     path: '/saved-games',
     name: 'SavedGames',
     component: SavedGamesView
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: SettingView
   }
 ];
 

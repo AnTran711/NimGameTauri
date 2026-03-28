@@ -15,7 +15,8 @@
         "title": "Nim Game",
         "maximized": true,
         "width": 1200,
-        "height": 800
+        "height": 800,
+        "additionalBrowserArgs": "--autoplay-policy=no-user-gesture-required"
       }
     ],
     "security": {
