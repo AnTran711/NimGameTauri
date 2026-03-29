@@ -1,6 +1,6 @@
 <script setup>
 import AILevelModal from '@/components/AILevelModal.vue';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import PixelButton from '@/components/pixel/PixelButton.vue';
 
@@ -9,12 +9,13 @@ const router = useRouter();
 const variant = ref('normal');
 const gameMode = ref('PVP');
 const aiLevel = ref('easy');
-
 const showModal = ref(false);
+
+const leafFallContainer = ref(null);
+let leafTimer = null;
 
 const selectLevel = (level) => {
   aiLevel.value = level;
-
   startNewGame();
 };
 
@@ -54,9 +55,55 @@ const goGuide = () => {
 const goSettings = () => {
   router.push('/settings');
 };
+
+function createLeaf() {
+  const container = leafFallContainer.value;
+  if (!container) return;
+
+  const leaf = document.createElement('div');
+  leaf.classList.add('leaf');
+
+  const duration = Math.random() * 2500 + 5500; // 5.5s - 8s
+  const size = Math.random() * 14 + 18; // 18px - 32px
+
+  // Spawn gần góc trên bên trái
+  const startX = Math.random() * 440 - 40; // -40px -> 400px
+  const startY = Math.random() * 140 - 90; // -90px -> 30px
+
+  // Gió đẩy sang phải + dao động nhẹ
+  const windPush = Math.random() * 180 + 120; // 120px -> 300px
+  const sway = Math.random() * 30 + 15; // 15px -> 45px
+
+  leaf.style.left = `${startX}px`;
+  leaf.style.top = `${startY}px`;
+  leaf.style.width = `${size}px`;
+  leaf.style.height = `${size}px`;
+  leaf.style.animationDuration = `${duration}ms`;
+
+  leaf.style.setProperty('--wind-push', `${windPush}px`);
+  leaf.style.setProperty('--sway', `${sway}px`);
+
+  container.appendChild(leaf);
+
+  setTimeout(() => {
+    leaf.remove();
+  }, duration);
+}
+
+onMounted(() => {
+  leafTimer = setInterval(createLeaf, 1500);
+});
+
+onUnmounted(() => {
+  if (leafTimer) {
+    clearInterval(leafTimer);
+    leafTimer = null;
+  }
+});
 </script>
 
 <template>
+  <div ref="leafFallContainer" class="leaf-fall-container"></div>
   <div class="center-wrapper">
     <!-- Title -->
     <div class="text-center mb-1">
@@ -282,5 +329,48 @@ const goSettings = () => {
   text-align: center;
   line-height: 1;
   --pixel-text-nudge: -6px;
+}
+
+/* leaf fall */
+.leaf-fall-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+:deep(.leaf) {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-image: url('/leaf.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  animation-name: fallDiagonal;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  will-change: transform;
+}
+
+@keyframes fallDiagonal {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(calc(20vw + var(--sway)), 35vh) rotate(120deg);
+  }
+  70% {
+    transform: translate(calc(45vw - var(--sway)), 75vh) rotate(250deg);
+  }
+  100% {
+    transform: translate(calc(70vw + var(--wind-push)), 115vh) rotate(360deg);
+    opacity: 0.95;
+  }
 }
 </style>
