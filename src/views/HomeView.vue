@@ -57,77 +57,75 @@ const goSettings = () => {
 </script>
 
 <template>
-  <div class="screen">
-    <div class="center-wrapper">
-      <!-- Title -->
-      <div class="text-center mb-1">
-        <h1 class="game-title">
-          <span class="title-nim">NIM</span>
-          <span class="title-game"> GAME</span>
-        </h1>
+  <div class="center-wrapper">
+    <!-- Title -->
+    <div class="text-center mb-1">
+      <h1 class="game-title">
+        <span class="title-nim">NIM</span>
+        <span class="title-game"> GAME</span>
+      </h1>
+    </div>
+
+    <!-- Wooden Panel -->
+    <div class="wooden-panel">
+      <!-- Mode Section -->
+      <div class="mode-box">
+        <p class="mode-heading">CHẾ ĐỘ CHƠI</p>
+
+        <hr class="border-t-2 border-white mb-3" />
+
+        <label
+          class="mode-row pixel-radio-row"
+          :class="{ 'mode-row--active': variant === 'normal' }"
+        >
+          <input
+            class="pixel-radio-input"
+            type="radio"
+            value="normal"
+            v-model="variant"
+          />
+          <span class="pixel-radio-box" aria-hidden="true"></span>
+          <div>
+            <p class="mode-name">Chế độ thường</p>
+            <p class="mode-desc">Người bốc cuối cùng sẽ THẮNG.</p>
+          </div>
+        </label>
+
+        <label
+          class="mode-row mt-1 pixel-radio-row"
+          :class="{ 'mode-row--active': variant === 'misere' }"
+        >
+          <input
+            class="pixel-radio-input"
+            type="radio"
+            value="misere"
+            v-model="variant"
+          />
+          <span class="pixel-radio-box" aria-hidden="true"></span>
+          <div>
+            <p class="mode-name">Chế độ Misère</p>
+            <p class="mode-desc">Người bốc cuối cùng sẽ THUA.</p>
+          </div>
+        </label>
       </div>
 
-      <!-- Wooden Panel -->
-      <div class="wooden-panel">
-        <!-- Mode Section -->
-        <div class="mode-box">
-          <p class="mode-heading">CHẾ ĐỘ CHƠI</p>
-
-          <hr class="border-t-2 border-white mb-3" />
-
-          <label
-            class="mode-row pixel-radio-row"
-            :class="{ 'mode-row--active': variant === 'normal' }"
-          >
-            <input
-              class="pixel-radio-input"
-              type="radio"
-              value="normal"
-              v-model="variant"
-            />
-            <span class="pixel-radio-box" aria-hidden="true"></span>
-            <div>
-              <p class="mode-name">Chế độ thường</p>
-              <p class="mode-desc">Người bốc cuối cùng sẽ THẮNG.</p>
-            </div>
-          </label>
-
-          <label
-            class="mode-row mt-1 pixel-radio-row"
-            :class="{ 'mode-row--active': variant === 'misere' }"
-          >
-            <input
-              class="pixel-radio-input"
-              type="radio"
-              value="misere"
-              v-model="variant"
-            />
-            <span class="pixel-radio-box" aria-hidden="true"></span>
-            <div>
-              <p class="mode-name">Chế độ Misère</p>
-              <p class="mode-desc">Người bốc cuối cùng sẽ THUA.</p>
-            </div>
-          </label>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-col gap-3 mt-5">
-          <PixelButton color="blue" @click="clickPVP" class="action-btn">
-            Người vs Người
-          </PixelButton>
-          <PixelButton color="green" @click="clickPVE" class="action-btn">
-            Người vs Máy
-          </PixelButton>
-          <PixelButton color="yellow" @click="goSavedGames" class="action-btn">
-            Trò chơi đã lưu
-          </PixelButton>
-          <PixelButton color="gray" @click="goGuide" class="action-btn">
-            Hướng dẫn chơi
-          </PixelButton>
-          <PixelButton color="brown" @click="goSettings" class="action-btn">
-            Cài đặt
-          </PixelButton>
-        </div>
+      <!-- Action Buttons -->
+      <div class="flex flex-col gap-3 mt-5">
+        <PixelButton color="blue" @click="clickPVP" class="action-btn">
+          Người vs Người
+        </PixelButton>
+        <PixelButton color="green" @click="clickPVE" class="action-btn">
+          Người vs Máy
+        </PixelButton>
+        <PixelButton color="yellow" @click="goSavedGames" class="action-btn">
+          Trò chơi đã lưu
+        </PixelButton>
+        <PixelButton color="gray" @click="goGuide" class="action-btn">
+          Hướng dẫn chơi
+        </PixelButton>
+        <PixelButton color="brown" @click="goSettings" class="action-btn">
+          Cài đặt
+        </PixelButton>
       </div>
     </div>
   </div>
@@ -136,18 +134,6 @@ const goSettings = () => {
 </template>
 
 <style scoped>
-/* ── Background ─────────────────────────────── */
-.screen {
-  min-height: 100vh;
-  background-image: url('/background-forest.jpg');
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-}
-
 .center-wrapper {
   display: flex;
   flex-direction: column;

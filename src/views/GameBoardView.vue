@@ -110,28 +110,26 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="board-screen">
-    <div class="board-shell">
-      <GameHeader
-        :current-player="gameStore.currentPlayer"
-        :game-mode="gameStore.gameMode"
-        :variant="gameStore.variant"
-        :ai-level="gameStore.aiLevel"
-        @open-move-drawer="openMoveDrawer"
-        @save-game="saveCurrentGame"
-      />
+  <div class="board-shell">
+    <GameHeader
+      :current-player="gameStore.currentPlayer"
+      :game-mode="gameStore.gameMode"
+      :variant="gameStore.variant"
+      :ai-level="gameStore.aiLevel"
+      @open-move-drawer="openMoveDrawer"
+      @save-game="saveCurrentGame"
+    />
 
-      <main class="board-main">
-        <GameBoard ref="gameBoardRef" />
-      </main>
+    <main class="board-main">
+      <GameBoard ref="gameBoardRef" />
+    </main>
 
-      <GameFooter
-        :game-mode="gameStore.gameMode"
-        :current-player="gameStore.currentPlayer"
-        @cancel="handleCancelSelection"
-        @confirm="handleConfirmPick"
-      />
-    </div>
+    <GameFooter
+      :game-mode="gameStore.gameMode"
+      :current-player="gameStore.currentPlayer"
+      @cancel="handleCancelSelection"
+      @confirm="handleConfirmPick"
+    />
   </div>
 
   <WinnerModal
@@ -151,18 +149,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.board-screen {
-  min-height: 100vh;
-  background-image:
-    linear-gradient(rgba(14, 9, 4, 0.45), rgba(14, 9, 4, 0.45)),
-    url('/background-forest.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 16px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .board-shell {
   width: min(1440px, 100%);
   height: min(722px, calc(100vh - 32px));

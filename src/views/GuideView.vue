@@ -10,104 +10,89 @@ const goHome = () => {
 </script>
 
 <template>
-  <div class="guide-screen">
-    <div class="guide-wrap">
-      <header class="guide-hero">
-        <div class="hero-icon" aria-hidden="true">
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect x="9" y="4" width="6" height="2" />
-            <rect x="7" y="6" width="2" height="2" />
-            <rect x="15" y="6" width="2" height="2" />
-            <rect x="19" y="4" width="2" height="2" />
-            <rect x="21" y="2" width="2" height="2" />
-            <rect y="10" width="3" height="2" />
-            <rect x="21" y="10" width="3" height="2" />
-            <rect x="3" y="4" width="2" height="2" />
-            <rect x="1" y="2" width="2" height="2" />
-            <rect x="7" y="14" width="2" height="2" />
-            <rect x="15" y="14" width="2" height="2" />
-            <rect x="5" y="8" width="2" height="6" />
-            <rect x="17" y="8" width="2" height="6" />
-            <rect x="9" y="16" width="6" height="2" />
-            <rect x="9" y="20" width="6" height="2" />
-            <rect x="9" y="18" width="2" height="2" />
-            <rect x="13" y="18" width="2" height="2" />
-            <rect x="11" width="2" height="3" />
-          </svg>
-        </div>
-
-        <h1 class="guide-title">HƯỚNG DẪN CHƠI NIM</h1>
-        <p class="guide-subtitle">
-          Trò chơi chiến thuật toán học đơn giản nhưng đầy thử thách.
-        </p>
-      </header>
-
-      <main class="guide-grid">
-        <section class="guide-card">
-          <h2 class="card-title">GIỚI THIỆU</h2>
-          <p class="card-text">
-            Nim là trò chơi chiến thuật nổi tiếng, yêu cầu người chơi suy nghĩ
-            logic và tính toán cẩn thận. Mỗi nước đi đều ảnh hưởng trực tiếp đến
-            kết quả trận đấu.
-          </p>
-        </section>
-
-        <section class="guide-card">
-          <h2 class="card-title">LUẬT CHƠI CƠ BẢN</h2>
-          <ul class="rule-list">
-            <li>Trò chơi gồm nhiều đống đá.</li>
-            <li>Hai người chơi lần lượt thực hiện lượt đi.</li>
-            <li>Mỗi lượt chỉ được chọn một đống đá để bốc.</li>
-            <li>Lấy ít nhất một viên đá từ đống đã chọn.</li>
-            <li>Khi không còn viên đá nào, trò chơi kết thúc.</li>
-          </ul>
-        </section>
-
-        <section class="guide-card guide-card--full">
-          <h2 class="card-title">CHẾ ĐỘ CHƠI</h2>
-          <div class="mode-row">
-            <span class="mode-chip mode-chip--blue">NORMAL</span>
-            <p class="card-text">Người lấy viên đá cuối cùng sẽ thắng.</p>
-          </div>
-          <div class="mode-row">
-            <span class="mode-chip mode-chip--red">MISERE</span>
-            <p class="card-text">Người lấy viên đá cuối cùng sẽ thua.</p>
-          </div>
-          <p class="card-note">
-            * Luôn kiểm tra chế độ trước khi bắt đầu trận đấu.
-          </p>
-        </section>
-      </main>
-
-      <div class="guide-actions">
-        <PixelButton color="yellow" class="home-btn" @click="goHome">
-          Quay về trang chủ
-        </PixelButton>
+  <div class="guide-wrap">
+    <header class="guide-hero">
+      <div class="hero-icon" aria-hidden="true">
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect x="9" y="4" width="6" height="2" />
+          <rect x="7" y="6" width="2" height="2" />
+          <rect x="15" y="6" width="2" height="2" />
+          <rect x="19" y="4" width="2" height="2" />
+          <rect x="21" y="2" width="2" height="2" />
+          <rect y="10" width="3" height="2" />
+          <rect x="21" y="10" width="3" height="2" />
+          <rect x="3" y="4" width="2" height="2" />
+          <rect x="1" y="2" width="2" height="2" />
+          <rect x="7" y="14" width="2" height="2" />
+          <rect x="15" y="14" width="2" height="2" />
+          <rect x="5" y="8" width="2" height="6" />
+          <rect x="17" y="8" width="2" height="6" />
+          <rect x="9" y="16" width="6" height="2" />
+          <rect x="9" y="20" width="6" height="2" />
+          <rect x="9" y="18" width="2" height="2" />
+          <rect x="13" y="18" width="2" height="2" />
+          <rect x="11" width="2" height="3" />
+        </svg>
       </div>
+
+      <h1 class="guide-title">HƯỚNG DẪN CHƠI NIM</h1>
+      <p class="guide-subtitle">
+        Trò chơi chiến thuật toán học đơn giản nhưng đầy thử thách.
+      </p>
+    </header>
+
+    <main class="guide-grid">
+      <section class="guide-card">
+        <h2 class="card-title">GIỚI THIỆU</h2>
+        <p class="card-text">
+          Nim là trò chơi chiến thuật nổi tiếng, yêu cầu người chơi suy nghĩ
+          logic và tính toán cẩn thận. Mỗi nước đi đều ảnh hưởng trực tiếp đến
+          kết quả trận đấu.
+        </p>
+      </section>
+
+      <section class="guide-card">
+        <h2 class="card-title">LUẬT CHƠI CƠ BẢN</h2>
+        <ul class="rule-list">
+          <li>Trò chơi gồm nhiều đống đá.</li>
+          <li>Hai người chơi lần lượt thực hiện lượt đi.</li>
+          <li>Mỗi lượt chỉ được chọn một đống đá để bốc.</li>
+          <li>Lấy ít nhất một viên đá từ đống đã chọn.</li>
+          <li>Khi không còn viên đá nào, trò chơi kết thúc.</li>
+        </ul>
+      </section>
+
+      <section class="guide-card guide-card--full">
+        <h2 class="card-title">CHẾ ĐỘ CHƠI</h2>
+        <div class="mode-row">
+          <span class="mode-chip mode-chip--blue">NORMAL</span>
+          <p class="card-text">Người lấy viên đá cuối cùng sẽ thắng.</p>
+        </div>
+        <div class="mode-row">
+          <span class="mode-chip mode-chip--red">MISERE</span>
+          <p class="card-text">Người lấy viên đá cuối cùng sẽ thua.</p>
+        </div>
+        <p class="card-note">
+          * Luôn kiểm tra chế độ trước khi bắt đầu trận đấu.
+        </p>
+      </section>
+    </main>
+
+    <div class="guide-actions">
+      <PixelButton color="yellow" class="home-btn" @click="goHome">
+        Quay về trang chủ
+      </PixelButton>
     </div>
   </div>
 </template>
 
 <style scoped>
-.guide-screen {
-  min-height: 100vh;
-  background-image:
-    linear-gradient(rgba(14, 9, 4, 0.45), rgba(14, 9, 4, 0.45)),
-    url('/background-forest.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 24px 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .guide-wrap {
   width: min(980px, 100%);
   background: #9b6b2a;

@@ -58,98 +58,83 @@ function getVariantLabel(state) {
 </script>
 
 <template>
-  <div class="saved-screen">
-    <div class="saved-wrap">
-      <header class="saved-header">
-        <div class="saved-header-left">
-          <PixelButton color="gray" class="back-btn" @click="goHome">
-            Quay lại
-          </PixelButton>
-          <h1 class="saved-title">GAME ĐÃ LƯU</h1>
-        </div>
-        <div class="saved-count">
-          Tổng số game: {{ savedGameStore.savedGames.length }}
-        </div>
-      </header>
+  <div class="saved-wrap">
+    <header class="saved-header">
+      <div class="saved-header-left">
+        <PixelButton color="gray" class="back-btn" @click="goHome">
+          Quay lại
+        </PixelButton>
+        <h1 class="saved-title">GAME ĐÃ LƯU</h1>
+      </div>
+      <div class="saved-count">
+        Tổng số game: {{ savedGameStore.savedGames.length }}
+      </div>
+    </header>
 
-      <main class="saved-main">
-        <div v-if="savedGameStore.savedGames.length === 0" class="empty-box">
-          <p class="empty-title">CHƯA CÓ BẢN GHI</p>
-          <p class="empty-subtitle">
-            Hãy chơi một ván game và lưu lại để xem tại đây.
-          </p>
-        </div>
+    <main class="saved-main">
+      <div v-if="savedGameStore.savedGames.length === 0" class="empty-box">
+        <p class="empty-title">CHƯA CÓ BẢN GHI</p>
+        <p class="empty-subtitle">
+          Hãy chơi một ván game và lưu lại để xem tại đây.
+        </p>
+      </div>
 
-        <div v-else class="saved-grid">
-          <article
-            v-for="game in savedGameStore.savedGames"
-            :key="game.id"
-            class="saved-card"
-          >
-            <div class="card-head">
-              <p class="card-time">
-                {{ new Date(game.timestamp).toLocaleString('vi-VN') }}
-              </p>
-            </div>
+      <div v-else class="saved-grid">
+        <article
+          v-for="game in savedGameStore.savedGames"
+          :key="game.id"
+          class="saved-card"
+        >
+          <div class="card-head">
+            <p class="card-time">
+              {{ new Date(game.timestamp).toLocaleString('vi-VN') }}
+            </p>
+          </div>
 
-            <div class="card-info">
-              <p>
-                <span class="chip chip-blue">CHẾ ĐỘ</span>
-                {{ getModeLabel(game.gameState) }}
-              </p>
-              <p>
-                <span class="chip chip-red">QUY TẮC</span>
-                {{ getVariantLabel(game.gameState) }}
-              </p>
-              <p>
-                <span class="chip chip-yellow">SỐ NƯỚC ĐI</span>
-                {{ game.gameState.historyMoves.length }}
-              </p>
-              <p class="heap-line">
-                <span class="chip chip-brown">ĐỐNG</span>
-                {{ game.gameState.heaps.map((h) => h.id).join(', ') }}
-              </p>
-            </div>
+          <div class="card-info">
+            <p>
+              <span class="chip chip-blue">CHẾ ĐỘ</span>
+              {{ getModeLabel(game.gameState) }}
+            </p>
+            <p>
+              <span class="chip chip-red">QUY TẮC</span>
+              {{ getVariantLabel(game.gameState) }}
+            </p>
+            <p>
+              <span class="chip chip-yellow">SỐ NƯỚC ĐI</span>
+              {{ game.gameState.historyMoves.length }}
+            </p>
+            <p class="heap-line">
+              <span class="chip chip-brown">ĐỐNG</span>
+              {{ game.gameState.heaps.map((h) => h.id).join(', ') }}
+            </p>
+          </div>
 
-            <div class="card-actions">
-              <PixelButton
-                color="blue"
-                class="action-btn"
-                style="--pixel-text-nudge: -3px"
-                @click="loadGame(game.id)"
-              >
-                Chơi tiếp
-              </PixelButton>
-              <PixelButton
-                color="red"
-                class="action-btn"
-                style="--pixel-text-nudge: -3px"
-                @click="deleteGame(game.id)"
-              >
-                Xóa
-              </PixelButton>
-            </div>
-          </article>
-        </div>
-      </main>
-    </div>
+          <div class="card-actions">
+            <PixelButton
+              color="blue"
+              class="action-btn"
+              style="--pixel-text-nudge: -3px"
+              @click="loadGame(game.id)"
+            >
+              Chơi tiếp
+            </PixelButton>
+            <PixelButton
+              color="red"
+              class="action-btn"
+              style="--pixel-text-nudge: -3px"
+              @click="deleteGame(game.id)"
+            >
+              Xóa
+            </PixelButton>
+          </div>
+        </article>
+      </div>
+    </main>
   </div>
 </template>
 
 <style scoped>
-.saved-screen {
-  min-height: 100vh;
-  background-image:
-    linear-gradient(rgba(14, 9, 4, 0.45), rgba(14, 9, 4, 0.45)),
-    url('/background-forest.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 18px 12px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
 .saved-wrap {
   width: min(1200px, 100%);
   background: #9b6b2a;
@@ -328,10 +313,6 @@ function getVariantLabel(state) {
 }
 
 @media (max-width: 680px) {
-  .saved-screen {
-    padding: 12px 8px;
-  }
-
   .saved-header {
     align-items: flex-start;
     flex-direction: column;
