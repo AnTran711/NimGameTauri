@@ -46,7 +46,7 @@ function confirmDialog(message, title) {
     title: title || 'Xác nhận',
     message,
     confirmText: 'Đồng ý',
-    cancelText: 'Hủy'
+    cancelText: 'Không'
   });
 }
 
